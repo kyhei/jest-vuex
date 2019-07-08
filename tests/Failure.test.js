@@ -16,10 +16,8 @@ describe('Test your Vuex module', () => {
   })
 
   test('state.itemに要素を追加', () => {
-    const items = [
-      { id: 1, name: 'hoge' }
-    ]
-    store.commit('models/User/addItem', items[0])
-    expect(store.state.models.User.items).toEqual(items)
+    const item = { id: 1, name: 'hoge' }
+    store.commit('models/User/addItem', item)
+    expect(store.state.models.User.items.length).toBe(1)
   })
 })
