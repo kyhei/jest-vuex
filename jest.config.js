@@ -1,3 +1,5 @@
 module.exports = {
-
+  "moduleNameMapper": {
+    "@": "<rootDir>"
+  }
 };

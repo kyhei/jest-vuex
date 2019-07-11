@@ -1,6 +1,6 @@
-import $axios from '../store/HttpClient'
-import { getters, mutations, actions } from '../store/Models/User'
-import { MockedVuexStore } from './mocks'
+import $axios from '@/store/HttpClient'
+import { getters, mutations, actions } from '@/store/Models/User'
+import { MockedVuexStore } from '@/mockedStore'
 
 jest.mock('../store/HttpClient')
 
@@ -21,7 +21,7 @@ describe('Test AdminUser getters', () => {
       ]
     }
 
-    const store = new MockedVuexStore({ state, getters, mutations, actions })
+    const store = new MockedVuexStore({ state, getters })
     expect(store.getters.getIndexById(1)).toBe(0)
     expect(store.getters['getIndexById'](2)).toBe(1)
   })
@@ -42,7 +42,7 @@ describe('Test AdminUser getters', () => {
       ]
     }
 
-    const store = new MockedVuexStore({ state, getters, mutations, actions })
+    const store = new MockedVuexStore({ state, getters })
     expect(store.getters.getItemById(1)).toEqual({
       id: 1,
       name: 'hoge',

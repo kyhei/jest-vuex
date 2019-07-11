@@ -1,5 +1,5 @@
 export class MockedVuexStore {
-  constructor({ state, getters, mutations, actions }) {
+  constructor({ state = {}, getters = {}, mutations = {}, actions = {} }) {
     this.state = state
 
     this.getters = {}

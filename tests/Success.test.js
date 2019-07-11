@@ -1,6 +1,6 @@
-import $axios from '../store/HttpClient'
-import { getters, mutations, actions } from '../store/Models/User'
-import { MockedVuexStore } from './mocks'
+import $axios from '@/store/HttpClient'
+import { mutations, actions } from '@/store/Models/User'
+import { MockedVuexStore } from '@/mockedStore'
 
 /* axiosをモック */
 jest.mock('../store/HttpClient')
@@ -16,7 +16,7 @@ describe('Test your Vuex module', () => {
       { id: 1, name: 'hoge' }
     ]
 
-    const store = new MockedVuexStore(state, getters, mutations, actions)
+    const store = new MockedVuexStore({ state, mutations })
     store.commit('setItems', items)
 
     expect(store.state.items).toEqual(items)
@@ -35,7 +35,7 @@ describe('Test your Vuex module', () => {
       status: 200
     })
 
-    const store = new MockedVuexStore(state, getters, mutations, actions)
+    const store = new MockedVuexStore({ state, mutations, actions })
 
     store.dispatch('add', item).then(res => {
       expect(store.state.items.length).toBe(1)
