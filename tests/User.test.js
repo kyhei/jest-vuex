@@ -1,8 +1,61 @@
 import $axios from '../store/HttpClient'
-import { mutations, actions } from '../store/Models/User'
+import { getters, mutations, actions } from '../store/Models/User'
 import { MockedVuexStore } from './mocks'
 
 jest.mock('../store/HttpClient')
+
+describe('Test AdminUser getters', () => {
+  test('get index', () => {
+    const state = {
+      items: [
+        {
+          id: 1,
+          name: 'hoge',
+          email: 'hoge@hoge.com'
+        },
+        {
+          id: 2,
+          name: 'fuga',
+          email: 'fuga@fuga.com'
+        }
+      ]
+    }
+
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
+    expect(store.getters.getIndexById(1)).toBe(0)
+    expect(store.getters['getIndexById'](2)).toBe(1)
+  })
+
+  test('get item', () => {
+    const state = {
+      items: [
+        {
+          id: 1,
+          name: 'hoge',
+          email: 'hoge@hoge.com'
+        },
+        {
+          id: 2,
+          name: 'fuga',
+          email: 'fuga@fuga.com'
+        }
+      ]
+    }
+
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
+    expect(store.getters.getItemById(1)).toEqual({
+      id: 1,
+      name: 'hoge',
+      email: 'hoge@hoge.com'
+    })
+
+    expect(store.getters['getItemById'](2)).toEqual({
+      id: 2,
+      name: 'fuga',
+      email: 'fuga@fuga.com'
+    })
+  })
+})
 
 describe('Test AdminUser mutations', () => {
   test('set items', () => {
@@ -24,7 +77,7 @@ describe('Test AdminUser mutations', () => {
       }
     ]
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
     store.commit('setItems', items)
     expect(store.state.items).toEqual(items)
   })
@@ -40,7 +93,7 @@ describe('Test AdminUser mutations', () => {
       email: 'hoge@hoge.com'
     }
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
     store.commit('addItem', item)
     expect(store.state.items).toEqual([item])
 
@@ -64,7 +117,7 @@ describe('Test AdminUser mutations', () => {
       }
     ]
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
 
     store.commit('setItems', items)
     store.commit('updateItem', {
@@ -98,7 +151,7 @@ describe('Test AdminUser mutations', () => {
       }
     ]
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
     store.commit('setItems', items)
     store.commit('deleteItem', 2)
 
@@ -141,7 +194,7 @@ describe('Test AdminUser actions', () => {
 
     $axios.get.mockResolvedValue(resp)
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
 
     store.dispatch('fetch').then(res => {
       expect(store.state.items).toEqual(items)
@@ -167,10 +220,46 @@ describe('Test AdminUser actions', () => {
 
     $axios.post.mockResolvedValue(resp)
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
 
     store.dispatch('add', item).then(res => {
       expect(store.state.items).toEqual([item])
+    })
+  })
+
+  test('copy item', () => {
+    const state = {
+      items: [
+        {
+          id: 1,
+          name: 'hoge',
+          email: 'hoge@hoge.com'
+        },
+        {
+          id: 2,
+          name: 'fuga',
+          email: 'fuga@fuga.com'
+        }
+      ]
+    }
+
+    const resp = {
+      data: {
+        message: 'ok'
+      },
+      status: 200
+    }
+
+    $axios.post.mockResolvedValue(resp)
+
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
+    store.dispatch('copy', 1).then(res => {
+      expect(store.state.items.length).toBe(3)
+      expect(store.state.items[2]).toEqual({
+        id: 3,
+        name: 'hoge',
+        email: 'hoge@hoge.com'
+      })
     })
   })
 
@@ -198,7 +287,7 @@ describe('Test AdminUser actions', () => {
 
     $axios.post.mockResolvedValue(resp)
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
 
     store.dispatch('edit', edited).then(res => {
       expect(store.state.items[0]).toEqual(edited)
@@ -228,7 +317,7 @@ describe('Test AdminUser actions', () => {
 
     $axios.delete.mockResolvedValue(resp)
 
-    const store = new MockedVuexStore(state, mutations, actions)
+    const store = new MockedVuexStore({ state, getters, mutations, actions })
 
     store.dispatch('delete', 1).then(res => {
       expect(store.state.items.length).toBe(1)

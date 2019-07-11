@@ -1,12 +1,14 @@
 export class MockedVuexStore {
-  constructor(state, mutations, actions) {
+  constructor({ state, getters, mutations, actions }) {
     this.state = state
-    this.mutations = {
-      ...mutations
+
+    this.getters = {}
+    for (let getterName in getters) {
+      this.getters[getterName] = getters[getterName](this.state, this.getters)
     }
-    this.actions = {
-      ...actions
-    }
+
+    this.mutations = mutations
+    this.actions = actions
   }
 
   commit(type, payload = null) {
@@ -26,7 +28,10 @@ export class MockedVuexStore {
     try {
       return this.actions[type](
         {
-          commit: (type, payload) => this.commit(type, payload)
+          state: this.state,
+          getters: this.getters,
+          commit: (type, payload) => this.commit(type, payload),
+          dispatch: (type, payload) => this.dispatch(type, payload)
         },
         payload
       )

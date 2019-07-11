@@ -4,7 +4,10 @@ const state = {
   items: []
 }
 
-const getters = {}
+export const getters = {
+  getIndexById: state => id => state.items.findIndex(item => item.id == id),
+  getItemById: (state, getters) => id => state.items[getters.getIndexById(id)]
+}
 
 export const mutations = {
   setItems(state, data) {
@@ -36,6 +39,14 @@ export const actions = {
   async add(context, data) {
     const response = await $axios.post(`/api/users/add`, data)
     context.commit('addItem', response.data)
+    return 'OK'
+  },
+
+  async copy(context, id) {
+    await $axios.post(`/api/users/copy`, { id })
+    const copied = context.getters['getItemById'](id)
+    copied.id = Math.max(...context.state.items.map(item => item.id)) + 1
+    context.commit('addItem', copied)
     return 'OK'
   },
 
